@@ -17,6 +17,9 @@ public class FoodsController {
     @Autowired
     FoodRepository foodRepository;
 
+    @Autowired
+    MealRepository mealRepository;
+
     @CrossOrigin(origins = "http://localhost:8080")
     @GetMapping("/api/v1/foods")
     public List<Food> index(){
@@ -34,7 +37,6 @@ public class FoodsController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Food create(@RequestBody String payload){
         try {
-            System.out.println(payload);
             JSONObject jsonObj = new JSONObject(payload);
             String name = jsonObj.getJSONObject("food").get("name").toString();
             String calories = jsonObj.getJSONObject("food").get("calories").toString();
@@ -50,18 +52,34 @@ public class FoodsController {
 
     }
 
-//    @PutMapping("/api/v1/foods/{id}")
-//    public Food update(@PathVariable Long id, @RequestBody Map<String, String> body){
-//        Food updatedFood = foodRepository.findOne(id);
-//        updatedFood.setName(body.get("name"));
-//        updatedFood.setCalories(body.get("calories"));
-//        return foodRepository.save(updatedFood);
-//    }
+    @Transactional
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PatchMapping("/api/v1/foods/{id}")
+    public Food update(@PathVariable Integer id, @RequestBody String payload){
+        try {
+            Food food = foodRepository.findOne(id);
+            JSONObject jsonObj = new JSONObject(payload);
+            String name = jsonObj.getJSONObject("food").get("name").toString();
+            String calories = jsonObj.getJSONObject("food").get("calories").toString();
+            food.setName(name);
+            food.setCalories(Integer.parseInt(calories));
+            return food;
+        } catch (JSONException e) {
+            //some exception handler code.
+            Food food = new Food("Fried Chicken", 2000);
+            return food;
+        }
+    }
 
     @CrossOrigin(origins = "http://localhost:8080")
     @DeleteMapping("/api/v1/foods/{id}")
     public boolean delete(@PathVariable Integer id) {
-        foodRepository.delete(id);
+        Food food = foodRepository.findOne(id);
+        mealRepository.findAll().forEach(meal -> {
+            meal.deleteFood(food);
+        });
+        foodRepository.delete(food);
+
         return true;
     }
 }
