@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FoodRepository extends JpaRepository<Food, Integer> {
+public interface MealRepository extends JpaRepository<Meal, Integer> {
 //    List<Food> findByName(String name);
 }
