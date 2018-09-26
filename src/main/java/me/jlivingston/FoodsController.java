@@ -20,21 +20,21 @@ public class FoodsController {
     @Autowired
     MealRepository mealRepository;
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/api/v1/foods")
     public List<Food> index(){
         return foodRepository.findAll();
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/api/v1/foods/{id}")
     public Food show(@PathVariable int id){
         return foodRepository.findOne(id);
     }
 
-    @PostMapping("/api/v1/foods")
     @Transactional
     @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping("/api/v1/foods")
     public Food create(@RequestBody String payload){
         try {
             JSONObject jsonObj = new JSONObject(payload);
@@ -71,7 +71,7 @@ public class FoodsController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/api/v1/foods/{id}")
     public boolean delete(@PathVariable Integer id) {
         Food food = foodRepository.findOne(id);

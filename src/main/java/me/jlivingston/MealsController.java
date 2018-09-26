@@ -21,13 +21,13 @@ public class MealsController {
     FoodRepository foodRepository;
 
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/api/v1/meals")
     public List<Meal> index(){
         return mealRepository.findAll();
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/api/v1/meals/{id}/foods")
     public Meal show(@PathVariable int id){
         return mealRepository.findOne(id);
@@ -62,7 +62,7 @@ public class MealsController {
 //        return foodRepository.save(updatedFood);
 //    }
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/api/v1/meals/{meal_id}/foods/{id}")
     public boolean delete(@PathVariable Integer meal_id, @PathVariable Integer id) {
         Meal meal = mealRepository.findOne(meal_id);
