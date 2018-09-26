@@ -32,7 +32,8 @@ public class Meal {
 
     }
 
-    public Meal(String name){
+    public Meal(Integer id, String name){
+        this.setId(id);
         this.name = name;
     }
 
@@ -43,6 +44,10 @@ public class Meal {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     // name
@@ -64,6 +69,10 @@ public class Meal {
 
     public void addFood(Food food){
         this.foods.add(food);
+    }
+
+    public void deleteFood(Food food){
+        this.foods.remove(food);
     }
 
     @Override

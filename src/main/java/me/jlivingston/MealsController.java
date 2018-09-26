@@ -17,6 +17,9 @@ public class MealsController {
     @Autowired
     MealRepository mealRepository;
 
+    @Autowired
+    FoodRepository foodRepository;
+
 
     @CrossOrigin(origins = "http://localhost:8080")
     @GetMapping("/api/v1/meals")
@@ -33,23 +36,20 @@ public class MealsController {
     @Transactional
     @PostMapping("/api/v1/meals/{meal_id}/foods/{id}")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public String create(@RequestBody String payload){
-        try {
-
-
-            System.out.println(payload);
-            JSONObject jsonObj = new JSONObject(payload);
-            String name = jsonObj.getJSONObject("food").get("name").toString();
-            String calories = jsonObj.getJSONObject("food").get("calories").toString();
-            Food food = new Food(name, Integer.parseInt(calories));
-            foodRepository.saveAndFlush(food);
+    public String create(@PathVariable int meal_id, @PathVariable int id){
+            System.out.println(meal_id);
+            System.out.println(id);
+            Meal meal = mealRepository.findOne(meal_id);
+            Food food = foodRepository.findOne(id);
+            System.out.println(meal_id);
+            System.out.println(meal);
+            System.out.println(id);
             System.out.println(food);
-            return food.toString();
-        } catch (JSONException e) {
-            //some exception handler code.
-            return "Oops something happened!";
-        }
+            meal.addFood(food);
+            mealRepository.save(meal);
 
+            return "Successfully added food to meal";
+//
     }
 
 
@@ -63,9 +63,12 @@ public class MealsController {
 //    }
 
     @CrossOrigin(origins = "http://localhost:8080")
-    @DeleteMapping("/api/v1/meals/{id}")
-    public boolean delete(@PathVariable Integer id) {
-        mealRepository.delete(id);
+    @DeleteMapping("/api/v1/meals/{meal_id}/foods/{id}")
+    public boolean delete(@PathVariable Integer meal_id, @PathVariable Integer id) {
+        Meal meal = mealRepository.findOne(meal_id);
+        Food food = foodRepository.findOne(id);
+        meal.deleteFood(food);
+        mealRepository.save(meal);
         return true;
     }
 }

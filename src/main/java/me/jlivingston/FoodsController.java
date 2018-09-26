@@ -32,7 +32,7 @@ public class FoodsController {
     @PostMapping("/api/v1/foods")
     @Transactional
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public String create(@RequestBody String payload){
+    public Food create(@RequestBody String payload){
         try {
             System.out.println(payload);
             JSONObject jsonObj = new JSONObject(payload);
@@ -41,10 +41,11 @@ public class FoodsController {
             Food food = new Food(name, Integer.parseInt(calories));
             foodRepository.saveAndFlush(food);
             System.out.println(food);
-            return food.toString();
+            return food;
         } catch (JSONException e) {
             //some exception handler code.
-            return "Oops something happened!";
+            Food food = new Food("Fried Chicken", 2000);
+            return food;
         }
 
     }
