@@ -17,12 +17,13 @@ public class FoodsController {
     @Autowired
     FoodRepository foodRepository;
 
-
+    @CrossOrigin(origins = "http://localhost:8080")
     @GetMapping("/api/v1/foods")
     public List<Food> index(){
         return foodRepository.findAll();
     }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @GetMapping("/api/v1/foods/{id}")
     public Food show(@PathVariable int id){
         return foodRepository.findOne(id);
@@ -30,14 +31,14 @@ public class FoodsController {
 
     @PostMapping("/api/v1/foods")
     @Transactional
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public String create(@RequestBody String payload){
         try {
+            System.out.println(payload);
             JSONObject jsonObj = new JSONObject(payload);
             String name = jsonObj.getJSONObject("food").get("name").toString();
-            int calories = (int) jsonObj.getJSONObject("food").get("calories");
-            System.out.println(calories);
-            Food food = new Food(name, calories);
-            System.out.println(food);
+            String calories = jsonObj.getJSONObject("food").get("calories").toString();
+            Food food = new Food(name, Integer.parseInt(calories));
             foodRepository.saveAndFlush(food);
             System.out.println(food);
             return food.toString();
@@ -56,6 +57,7 @@ public class FoodsController {
 //        return foodRepository.save(updatedFood);
 //    }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @DeleteMapping("/api/v1/foods/{id}")
     public boolean delete(@PathVariable Integer id) {
         foodRepository.delete(id);

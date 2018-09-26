@@ -80,7 +80,7 @@ public class Food implements Serializable{
         return "{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", calories='" + calories + '\'' +
+                ", calories=" + calories +
                 '}';
     }
 }

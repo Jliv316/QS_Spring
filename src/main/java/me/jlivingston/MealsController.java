@@ -18,14 +18,38 @@ public class MealsController {
     MealRepository mealRepository;
 
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @GetMapping("/api/v1/meals")
     public List<Meal> index(){
         return mealRepository.findAll();
     }
 
-    @GetMapping("/api/v1/meals/{id}")
+    @CrossOrigin(origins = "http://localhost:8080")
+    @GetMapping("/api/v1/meals/{id}/foods")
     public Meal show(@PathVariable int id){
         return mealRepository.findOne(id);
+    }
+
+    @Transactional
+    @PostMapping("/api/v1/meals/{meal_id}/foods/{id}")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    public String create(@RequestBody String payload){
+        try {
+
+
+            System.out.println(payload);
+            JSONObject jsonObj = new JSONObject(payload);
+            String name = jsonObj.getJSONObject("food").get("name").toString();
+            String calories = jsonObj.getJSONObject("food").get("calories").toString();
+            Food food = new Food(name, Integer.parseInt(calories));
+            foodRepository.saveAndFlush(food);
+            System.out.println(food);
+            return food.toString();
+        } catch (JSONException e) {
+            //some exception handler code.
+            return "Oops something happened!";
+        }
+
     }
 
 
@@ -38,6 +62,7 @@ public class MealsController {
 //        return foodRepository.save(updatedFood);
 //    }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @DeleteMapping("/api/v1/meals/{id}")
     public boolean delete(@PathVariable Integer id) {
         mealRepository.delete(id);
