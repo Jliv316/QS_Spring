@@ -1,10 +1,22 @@
 package me.jlivingston;
 
-import javax.persistence.*;
+import java.util.*;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONException;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "meals")
 public class Meal {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -12,21 +24,30 @@ public class Meal {
     private String name;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "student_subject", joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id", referencedColumnName = "id"))
-    private Set<Subject> subjects;
+    @JoinTable(name = "meal_foods", joinColumns = @JoinColumn(name = "meal_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "food_id", referencedColumnName = "id"))
+    private Set<Food> foods;
 
-    public Student(){
+    public Meal(){
 
     }
 
-    public Student(String name){
+    public Meal(Integer id, String name){
+        this.setId(id);
         this.name = name;
     }
 
-    public Student(String name, Set<Subject> subjects){
+    public Meal(String name, Set<Food> foods){
         this.name = name;
-        this.subjects = subjects;
+        this.foods = foods;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     // name
@@ -37,28 +58,46 @@ public class Meal {
         this.name = name;
     }
 
-    // subjects
-    public Set<Subject> getSubjects() {
-        return subjects;
+    // foods
+    public Set<Food> getFoods() {
+        return foods;
     }
 
-    public void setSubjects(Set<Subject> subjects) {
-        this.subjects = subjects;
+    public void setFoods(Set<Food> foods) {
+        this.foods = foods;
+    }
+
+    public void addFood(Food food){
+        this.foods.add(food);
+    }
+
+    public void deleteFood(Food food){
+        this.foods.remove(food);
     }
 
     @Override
     public String toString(){
-        String info = "";
-        JSONObject jsonInfo = new JSONObject();
-        jsonInfo.put("name",this.name);
-        JSONArray subArray = new JSONArray();
-        this.subjects.forEach(sub->{
-            JSONObject subJson = new JSONObject();
-            subJson.put("name", sub.getName());
-            subArray.put(subJson);
-        });
-        jsonInfo.put("subjects", subArray);
-        info = jsonInfo.toString();
-        return info;
+        try {
+            String info = "";
+            JSONObject jsonInfo = new JSONObject();
+            jsonInfo.put("id", this.id);
+            jsonInfo.put("name", this.name);
+            JSONArray subArray = new JSONArray();
+            this.foods.forEach(sub -> {
+                JSONObject subJson = new JSONObject();
+                try {
+                    subJson.put("name", sub.getName());
+                } catch(JSONException e){
+                    System.out.println("not a hash");
+                }
+                subArray.put(subJson);
+            });
+            jsonInfo.put("foods", subArray);
+            info = jsonInfo.toString();
+            return info;
+        } catch(JSONException e){
+            return "not a hash";
+        }
     }
 }
+
